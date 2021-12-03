@@ -185,6 +185,7 @@ def game():
         
         while dealer.value < 17:
             dealer.addCard(newDeck.deal())
+            dealer.adjustForAce()
 
         if playerHasBusted == False:
             showAll(player,dealer)
