@@ -141,10 +141,8 @@ def game():
     
         print("Welcome to Blackjack!")
 
-        print("Initializing deck...")
         newDeck = Deck()
         newDeck.shuffle()
-        print("Deck initialized...")
         
         while True:
             if playerChips.total > 0:
@@ -157,22 +155,19 @@ def game():
                 print("You do not have enough money!")
                 return
             
-        print("Initializing player's hand...")
         player = Hand()
-        print("Initializing dealer's hand...")
         dealer = Hand()
         
         
-        print("Dealing 2 cards to player and dealer...")
         for i in range (0, 2):
             dealer.addCard(newDeck.deal())
             player.addCard(newDeck.deal())
             i += 1
-        print("Cards have been dealt...")
             
         showSome(player,dealer)
-        print(f"Your current card values: {player.value}")
 
+        playerHasBusted = False
+        
         while playing:
             print(f"Your current card values: {player.value}")
             hitOrStand(newDeck,player)
@@ -182,6 +177,7 @@ def game():
                     player.adjustForAce()
                 else:
                     playerBusts()
+                    playerHasBusted = True
                     playerChips.loseBet()
                     break
             elif player.value == 21:
@@ -190,23 +186,24 @@ def game():
         while dealer.value < 17:
             dealer.addCard(newDeck.deal())
 
-        showAll(player,dealer)
-        print(f"Your value: {player.value}, dealer value {dealer.value}")
+        if playerHasBusted == False:
+            showAll(player,dealer)
+            print(f"Your value: {player.value}, dealer value {dealer.value}")
 
-        if dealer.value > player.value and dealer.value < 21:
-            dealerWins()
-            playerChips.loseBet()
-        elif player.value > dealer.value and player.value < 21:
-            playerWins()
-            playerChips.winBet()
-        elif player.value == 21:
-            playerWins()
-            playerChips.winBet()
-        elif dealer.value > 21 and player.value < 21:
-            dealerBusts()
-            playerChips.winBet()
-        elif player.value == 21 and dealer.value == 21:
-            push()
+            if dealer.value > player.value and dealer.value < 21:
+                dealerWins()
+                playerChips.loseBet()
+            elif player.value > dealer.value and player.value < 21:
+                playerWins()
+                playerChips.winBet()
+            elif player.value == 21:
+                playerWins()
+                playerChips.winBet()
+            elif dealer.value > 21 and player.value < 21:
+                dealerBusts()
+                playerChips.winBet()
+            elif (player.value == 21 and dealer.value == 21) or (player.value == dealer.value):
+                push()
         
         print(f"You have ${playerChips.total} left")
         playAgain = ''
